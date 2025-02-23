@@ -1,0 +1,34 @@
+open System
+
+// Функция для определения нечетности числа 
+let opredelenie (n: float) =
+    let rec ch (num: float) =
+        let intNum = int(abs num)
+        if intNum = 0 then false
+        else if intNum = 1 then true
+        else if num < 0.0 then ch (abs num)
+        else ch (num - 2.0)
+    ch n
+
+// Функция создания списка
+let create number =
+    [ for i : int in 1 .. number do
+        printf "Введите элемент списка %d: " i
+        let input = Console.ReadLine()
+        let a = float(input)
+        yield opredelenie a
+    ]
+
+// Основная программа
+[<EntryPoint>]
+let main argv =
+    printfn "8 вариант: программа формирования списка true/false по нечетности чисел"
+    printf "Введите кол-во элементов списка: "  // Запрос количества элементов
+    let number = int(Console.ReadLine())
+    
+    let resul = create number    // Создание списка 
+    
+    printfn "\nИтоговый список:"   // Вывод результатов
+    resul |> List.iter (fun x -> printf "%b " x)
+    printfn "" // Переход на новую строку
+    0 // Возврат 

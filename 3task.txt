@@ -1,0 +1,106 @@
+open System
+
+// Функция для добавления элемента в начало списка 
+let addElement element list = element :: list
+
+// Функция для удаления элемента из списка 
+let rec remove element list =
+    match list with
+    | [] -> []
+    | head :: tail when head = element -> tail
+    | head :: tail -> head :: (remove element tail)
+
+// Функция для поиска элемента в списке 
+let rec find element list =
+    match list with
+    | [] -> false
+    | head :: tail when head = element -> true
+    | head :: tail -> find element tail
+
+// Функция для сцепления двух списков 
+let rec concat list1 list2 =
+    match list1 with
+    | [] -> list2
+    | head :: tail -> head :: (concat tail list2)
+
+// Функция для получения элемента по индексу 
+let rec getElementByIndex index list =
+    let rec getElement index list acc =
+        match list with
+        | [] -> None
+        | head :: tail when acc = index -> Some head
+        | head :: tail -> getElement index tail (acc + 1)
+    getElement index list 0
+
+// Функция для чтения целого числа с консоли с проверкой корректности ввода
+let rec readInt () =
+    match Console.ReadLine() with
+    | s ->
+        match Int32.TryParse s with // <- Исправлено: match для TryParse
+        | true, result -> Some result // <- Исправлено: сопоставление с образцом
+        | false, _ -> // <-  _  - игнорируем второе значение кортежа, если преобразование неудачно
+            printfn "Некорректный ввод. Введите целое число."
+            readInt ()
+printfn "8 вариант: Создайте собственные функции для выполнения основных операций над списками (добавление/
+удаление/поиск элемента, сцепка двух списков, получение элемента по номеру)."
+
+// Создание списка из введенных элементов
+let createList number =
+    [
+        for i in 1 .. number do
+            printf "Введите элемент списка: "
+            let a = match readInt() with
+                    | Some a -> a
+                    | None -> failwith "Некорректный ввод"
+            yield a
+    ]
+
+[<EntryPoint>]
+let main argv =
+    printf "Введите количество элементов в первом списке: "
+    let number1 = match readInt() with
+                   | Some n when n > 0 -> n
+                   | _ ->
+                       printfn "Некорректный ввод. Введите положительное целое число."
+                       match readInt() with
+                       | Some n when n > 0 -> n
+                       | _ -> 0 // или другое значение по умолчанию, или повторный запрос, или выход
+
+    let x = createList number1
+    printfn "Первый сгенерированный список: %A" x
+
+    printf "Введите количество элементов во втором списке: "
+    let number2 = match readInt() with
+                   | Some n when n > 0 -> n
+                   | _ ->
+                       printfn "Некорректный ввод. Введите положительное целое число."
+                       match readInt() with
+                       | Some n when n > 0 -> n
+                       | _ -> 0 // или другое значение по умолчанию, или повторный запрос, или выход
+
+    let y = createList number2
+    printfn "Второй сгенерированный список: %A" y
+
+    // Примеры использования функций
+    let newList = addElement 5 x
+    printfn "Список после добавления 5 в первый список: %A" newList
+
+    let listAfterRemoval = remove (List.head x) newList
+    printfn "Список после удаления первого элемента из первого списка: %A" listAfterRemoval
+
+    let isPresent = find -2 x
+    printfn "Элемент -2 %sв первом списке." (if isPresent then "находится " else "не находится ")
+
+    let concatenatedList = concat x y
+    printfn "Сцепленный список: %A" concatenatedList
+
+    try
+        let elementAtIndex = getElementByIndex 2 x
+        match elementAtIndex with
+        | Some element -> printfn "Элемент по индексу 2 в первом списке: %d" element
+        | None -> printfn "Индекс выходит за пределы первого списка"
+    with
+    | :? IndexOutOfRangeException as ex ->
+        printfn "%s" ex.Message
+
+    0 // Возвращаем код завершения
