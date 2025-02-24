@@ -36,8 +36,8 @@ let rec getElementByIndex index list =
 let rec readInt () =
     match Console.ReadLine() with
     | s ->
-        match Int32.TryParse s with // <- Исправлено: match для TryParse
-        | true, result -> Some result // <- Исправлено: сопоставление с образцом
+        match Int32.TryParse s with 
+        | true, result -> Some result 
         | false, _ -> // <-  _  - игнорируем второе значение кортежа, если преобразование неудачно
             printfn "Некорректный ввод. Введите целое число."
             readInt ()
